@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1093974837419",
+    "project_id": "bestorganizer-8bcc1",
+    "storage_bucket": "bestorganizer-8bcc1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1093974837419:android:4c2496e6f08740387f8fee",
+        "android_client_info": {
+          "package_name": "com.example.organizertest"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1093974837419-l4l1t27jokgua5tb0pek2rpke9anjjhm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCmFpHg0IfGtNQjJZJJ_WCD2qN_-nsE850"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1093974837419-l4l1t27jokgua5tb0pek2rpke9anjjhm.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
