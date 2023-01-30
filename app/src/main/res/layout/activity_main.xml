@@ -9,17 +9,45 @@
     tools:context=".MainActivity">
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/TaskTV"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Task1" />
+        android:text="Wprowadź zadanie:"
+        android:textColor="#0B0A0A" />
 
     <EditText
         android:id="@+id/add_task_edit"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:hint="Treść zadania"
         android:inputType="text"
-        android:maxHeight="20dp" />
+        android:maxHeight="20dp"
+        android:layout_marginBottom="10dp"
+        />
+
+    <TextView
+        android:id="@+id/dataTTV"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Wybierz date:"
+        android:textColor="#000000" />
+
+    <TextView
+        android:id="@+id/dataTV"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:textSize="20dp"
+        android:text="DD/MM/YYYY"
+        android:maxHeight="20dp"
+        android:layout_marginBottom="10dp"
+        />
+
+    <Button
+        android:id="@+id/dataPicker"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Wybierz date"
+        android:layout_marginBottom="20dp"/>
 
     <Button
         android:id="@+id/submit_btn"
