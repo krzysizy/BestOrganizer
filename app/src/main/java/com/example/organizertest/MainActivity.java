@@ -1,8 +1,10 @@
 package com.example.organizertest;
 
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -10,6 +12,8 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.DocumentChange;
@@ -32,6 +36,8 @@ public class MainActivity extends AppCompatActivity implements OnDialogCloseList
     private List<ToDoModel> mList;
     private Query query;
     private ListenerRegistration listenerRegistration;
+    private static final int ERROR_DIALOG_REQUEST = 9001;
+    private boolean isOk;
 
 
 
@@ -40,12 +46,18 @@ public class MainActivity extends AppCompatActivity implements OnDialogCloseList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+//        if(isServicesOK()){
+//            init();
+//        }
+
         recyclerView = findViewById(R.id.recycerlview);
         mFab = findViewById(R.id.floatingActionButton);
         firestore = FirebaseFirestore.getInstance();
 
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
+
+
 
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -88,4 +100,8 @@ public class MainActivity extends AppCompatActivity implements OnDialogCloseList
         showData();
         adapter.notifyDataSetChanged();
     }
+
+
+
+
 }

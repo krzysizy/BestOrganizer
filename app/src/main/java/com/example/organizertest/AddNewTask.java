@@ -1,7 +1,10 @@
 package com.example.organizertest;
 
+import static android.app.Activity.RESULT_OK;
+
 import android.app.Activity;
 import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -25,6 +28,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
@@ -51,6 +56,10 @@ public class AddNewTask extends BottomSheetDialogFragment {
     private String id = "";
     private String dueDateUpdate = "";
     private TextView mDestination;
+
+    private static final int ERROR_DIALOG_REQUEST = 9001;
+
+    CharSequence searchAddress;
 
     public static AddNewTask newInstance(){
         return new AddNewTask();
@@ -104,6 +113,10 @@ public class AddNewTask extends BottomSheetDialogFragment {
             mSaveBtn.setTextColor(Color.WHITE);
         }
 
+        if(isServicesOK()){
+            init();
+        }
+
         mTaskEdit.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -154,6 +167,8 @@ public class AddNewTask extends BottomSheetDialogFragment {
             }
         });
 
+
+
         boolean finalIsUpdate = isUpdate;
         mSaveBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -200,6 +215,18 @@ public class AddNewTask extends BottomSheetDialogFragment {
         });
     }
 
+    private void init(){
+        mDestination.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                searchAddress = mDestination.getText();
+                Intent intent = new Intent(context, MapActivity1.class);
+                intent.putExtra("address", searchAddress);
+                startActivityForResult(intent,1);
+            }
+        });
+    }
+
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -212,6 +239,33 @@ public class AddNewTask extends BottomSheetDialogFragment {
         Activity activity = getActivity();
         if (activity instanceof  OnDialogCloseListner){
             ((OnDialogCloseListner)activity).onDialogClose(dialog);
+        }
+    }
+
+    public boolean isServicesOK(){
+        int available = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(context);
+
+        if(available == ConnectionResult.SUCCESS){
+            return true;
+        }
+        else if(GoogleApiAvailability.getInstance().isUserResolvableError(available)){
+            Toast.makeText(context, "Internet", Toast.LENGTH_SHORT).show();
+            Dialog dialog = GoogleApiAvailability.getInstance().getErrorDialog(AddNewTask.this, available, ERROR_DIALOG_REQUEST);
+            dialog.show();
+        }else{
+            Toast.makeText(context, "You can't make map requests", Toast.LENGTH_SHORT).show();
+            mDestination.setEnabled(false);
+        }
+        return false;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode == RESULT_OK && requestCode == 1) {
+            if(data != null) {
+                mDestination.setText(data.getStringExtra("address"));
+            }
         }
     }
 }
