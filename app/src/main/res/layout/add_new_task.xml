@@ -87,4 +87,13 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/set_loc_tv" />
 
+    <ImageView
+        android:id="@+id/speek_mic_btn"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:src="@drawable/ic_baseline_mic_24"
+        app:layout_constraintBottom_toBottomOf="@+id/task_edittext"
+        app:layout_constraintEnd_toEndOf="@+id/task_edittext"
+        app:layout_constraintTop_toTopOf="@+id/task_edittext" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

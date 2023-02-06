@@ -56,6 +56,9 @@ public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.MyViewHolder> 
         bundle.putString("task", toDoModel.getTask());
         bundle.putString("due", toDoModel.getDue());
         bundle.putString("id", toDoModel.TaskId);
+        bundle.putString("destination", toDoModel.getDestination());
+        bundle.putString("sTime", toDoModel.getsTime());
+        bundle.putString("eTime", toDoModel.geteTime());
 
         AddNewTask addNewTask = new AddNewTask();
         addNewTask.setArguments(bundle);
@@ -72,32 +75,38 @@ public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.MyViewHolder> 
 
         holder.mCheckBox.setChecked(toBoolean(toDoModel.getStatus()));
 
-
         checkPaintStatus(holder);
 
         holder.mCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    checkPaintStatus(holder);
                     firestore.collection("task").document(toDoModel.TaskId).update("status", 1);
-                } else {
                     checkPaintStatus(holder);
+                } else {
                     firestore.collection("task").document(toDoModel.TaskId).update("status", 0);
+                    checkPaintStatus(holder);
                 }
             }
         });
 
+        checkStatus(toDoModel, holder);
+
         holder.mNavigation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                getLocationPermission();
                 String sSource = "";
-                String sDestination = "Sierakowskiego 32";
+                String sDestination = toDoModel.getDestination();
                 DisplayTrack(sSource, sDestination);
             }
         });
 
+    }
+
+    private void checkStatus(ToDoModel toDoModel, MyViewHolder holder) {
+        if(toDoModel.getStatus() == 1) {
+            holder.mCheckBox.setChecked(true);
+        }
     }
 
 
@@ -134,7 +143,7 @@ public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.MyViewHolder> 
             holder.mCheckBox.setPaintFlags(holder.mCheckBox.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
             holder.mDueDateTv.setPaintFlags(holder.mDueDateTv.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
         }
-        if((!holder.mCheckBox.isChecked()) && holder.mCheckBox.getPaintFlags() != 0){
+        if(((!holder.mCheckBox.isChecked()) && holder.mCheckBox.getPaintFlags() != 0)){
             holder.mCheckBox.setPaintFlags(0);
             holder.mDueDateTv.setPaintFlags(0);
         }

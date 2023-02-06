@@ -2,12 +2,8 @@ package com.example.organizertest;
 
 public class ToDoModel extends TaskId {
 
-    private String task , due, dest, sTime, eTime;
+    private String task , due, sTime, eTime, destination;
     private int status;
-
-    public String getDest() {
-        return dest;
-    }
 
     public String getsTime() {
         return sTime;
@@ -16,7 +12,6 @@ public class ToDoModel extends TaskId {
     public String geteTime() {
         return eTime;
     }
-
     public String getTask() {
         return task;
     }
@@ -27,5 +22,8 @@ public class ToDoModel extends TaskId {
 
     public int getStatus() {
         return status;
+    }
+    public String getDestination() {
+        return destination;
     }
 }

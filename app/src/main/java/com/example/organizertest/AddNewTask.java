@@ -2,6 +2,7 @@ package com.example.organizertest;
 
 import static android.app.Activity.RESULT_OK;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
@@ -11,6 +12,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.speech.RecognizerIntent;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -20,6 +22,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -37,6 +40,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
@@ -57,7 +61,9 @@ public class AddNewTask extends BottomSheetDialogFragment {
     private String destination = "";
     private TextView setDestination;
     private TextView setStartTime;
+    private ImageView speechToText;
     private TextView setEndTime;
+    private static final int RECOGNIZER_CODE = 2;
 
     private static final int ERROR_DIALOG_REQUEST = 9001;
 
@@ -79,6 +85,7 @@ public class AddNewTask extends BottomSheetDialogFragment {
         return rootView;
     }
 
+    @SuppressLint("SuspiciousIndentation")
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -89,7 +96,18 @@ public class AddNewTask extends BottomSheetDialogFragment {
         setDestination = view.findViewById(R.id.set_loc_tv);
         setStartTime = view.findViewById(R.id.set_start_time);
         setEndTime = view.findViewById(R.id.set_end_time);
+        speechToText = view.findViewById(R.id.speek_mic_btn);
         firestore = FirebaseFirestore.getInstance();
+
+        speechToText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+                intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Speek Up");
+                startActivityForResult(intent, RECOGNIZER_CODE);
+            }
+        });
 
         boolean isUpdate = false;
 
@@ -106,11 +124,13 @@ public class AddNewTask extends BottomSheetDialogFragment {
             mTaskEdit.setText(task);
             if (!(dueDateUpdate.equals("")))
             setDate.setText(dueDateUpdate);
-//            if (!(sTimeUpdate.equals("")))
+            if (!(sTimeUpdate.equals("")))
             setStartTime.setText(sTimeUpdate);
-//            if (!(eTimeUpdate.equals("")))
-            setEndTime.setText(eTimeUpdate);
-//            if (!(destinationUpdate.equals("")))
+            if (!(eTimeUpdate.equals(""))) {
+                setEndTime.setVisibility(View.VISIBLE);
+                setEndTime.setText(eTimeUpdate);
+            }
+            if (!(destinationUpdate.equals("")))
             setDestination.setText(destinationUpdate);
         }
 
@@ -324,6 +344,10 @@ public class AddNewTask extends BottomSheetDialogFragment {
                 setDestination.setText(data.getStringExtra("address"));
                 destination = data.getStringExtra("address");
             }
+        }
+        if(requestCode == RECOGNIZER_CODE && resultCode == RESULT_OK){
+            ArrayList<String> taskText = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+            mTaskEdit.setText(taskText.get(0).toString());
         }
     }
 }
