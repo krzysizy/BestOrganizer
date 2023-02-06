@@ -5,6 +5,7 @@ import static android.app.Activity.RESULT_OK;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -20,6 +21,7 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -49,9 +51,13 @@ public class AddNewTask extends BottomSheetDialogFragment {
     private FirebaseFirestore firestore;
     private Context context;
     private String dueDate = "";
+    private String sTime = "";
+    private String eTime = "";
     private String id = "";
-    private String dueDateUpdate = "";
-    private TextView mDestination;
+    private String destination = "";
+    private TextView setDestination;
+    private TextView setStartTime;
+    private TextView setEndTime;
 
     private static final int ERROR_DIALOG_REQUEST = 9001;
 
@@ -77,12 +83,12 @@ public class AddNewTask extends BottomSheetDialogFragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-
-
         setDate = view.findViewById(R.id.set_date_tv);
         mTaskEdit = view.findViewById(R.id.task_edittext);
         mSaveBtn = view.findViewById(R.id.save_btn);
-        mDestination = view.findViewById(R.id.set_loc_tv);
+        setDestination = view.findViewById(R.id.set_loc_tv);
+        setStartTime = view.findViewById(R.id.set_start_time);
+        setEndTime = view.findViewById(R.id.set_end_time);
         firestore = FirebaseFirestore.getInstance();
 
         boolean isUpdate = false;
@@ -92,11 +98,20 @@ public class AddNewTask extends BottomSheetDialogFragment {
             isUpdate = true;
             String task = bundle.getString("task");
             id = bundle.getString("id");
-            dueDateUpdate = bundle.getString("due");
+            String dueDateUpdate = bundle.getString("due");
+            String sTimeUpdate = bundle.getString("sTime");
+            String eTimeUpdate = bundle.getString("eTime");
+            String destinationUpdate = bundle.getString("destination");
 
             mTaskEdit.setText(task);
+            if (!(dueDateUpdate.equals("")))
             setDate.setText(dueDateUpdate);
-
+//            if (!(sTimeUpdate.equals("")))
+            setStartTime.setText(sTimeUpdate);
+//            if (!(eTimeUpdate.equals("")))
+            setEndTime.setText(eTimeUpdate);
+//            if (!(destinationUpdate.equals("")))
+            setDestination.setText(destinationUpdate);
         }
 
         if (mTaskEdit.length() <= 0){
@@ -163,6 +178,50 @@ public class AddNewTask extends BottomSheetDialogFragment {
             }
         });
 
+        setStartTime.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final Calendar c = Calendar.getInstance();
+                int hour = c.get(Calendar.HOUR_OF_DAY);
+                int minute = c.get(Calendar.MINUTE);
+
+                TimePickerDialog timePickerDialog = new TimePickerDialog(context,
+                        new TimePickerDialog.OnTimeSetListener() {
+
+                            @Override
+                            public void onTimeSet(TimePicker view, int hourOfDay,
+                                                  int minute) {
+                                setStartTime.setText(hourOfDay + ":" + minute);
+                                setEndTime.setVisibility(View.VISIBLE);
+                                sTime = hourOfDay + ":" + minute;
+                            }
+                        }, hour, minute, false);
+                timePickerDialog.show();
+            }
+        });
+
+        setEndTime.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final Calendar c = Calendar.getInstance();
+                int hour = c.get(Calendar.HOUR_OF_DAY);
+                int minute = c.get(Calendar.MINUTE) + 1;
+
+                TimePickerDialog timePickerDialog = new TimePickerDialog(context,
+                        new TimePickerDialog.OnTimeSetListener() {
+
+                            @Override
+                            public void onTimeSet(TimePicker view, int hourOfDay,
+                                                  int minute) {
+                                setEndTime.setText(hourOfDay + ":" + minute);
+                                eTime = hourOfDay + ":" + minute;
+                            }
+                        }, hour, minute, false);
+                timePickerDialog.show();
+            }
+        });
+
+
 
 
         boolean finalIsUpdate = isUpdate;
@@ -173,9 +232,8 @@ public class AddNewTask extends BottomSheetDialogFragment {
                 String task = mTaskEdit.getText().toString();
 
                 if (finalIsUpdate){
-                    firestore.collection("task").document(id).update("task" , task , "due" , dueDate);
+                    firestore.collection("task").document(id).update("task" , task , "due" , dueDate, "sTime", sTime, "eTime", eTime, "destination", destination);
                     Toast.makeText(context, "Task Updated", Toast.LENGTH_SHORT).show();
-
                 }
                 else {
                     if (task.isEmpty()) {
@@ -186,6 +244,9 @@ public class AddNewTask extends BottomSheetDialogFragment {
 
                         taskMap.put("task", task);
                         taskMap.put("due", dueDate);
+                        taskMap.put("sTime", sTime);
+                        taskMap.put("eTime", eTime);
+                        taskMap.put("destination",destination);
                         taskMap.put("status", 0);
                         taskMap.put("time", FieldValue.serverTimestamp());
 
@@ -212,10 +273,10 @@ public class AddNewTask extends BottomSheetDialogFragment {
     }
 
     private void init(){
-        mDestination.setOnClickListener(new View.OnClickListener() {
+        setDestination.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                searchAddress = mDestination.getText();
+                searchAddress = setDestination.getText();
                 Intent intent = new Intent(context, MapActivity.class);
                 intent.putExtra("address", searchAddress);
                 startActivityForResult(intent,1);
@@ -250,7 +311,7 @@ public class AddNewTask extends BottomSheetDialogFragment {
             dialog.show();
         }else{
             Toast.makeText(context, "You can't make map requests", Toast.LENGTH_SHORT).show();
-            mDestination.setEnabled(false);
+            setDestination.setEnabled(false);
         }
         return false;
     }
@@ -260,7 +321,8 @@ public class AddNewTask extends BottomSheetDialogFragment {
         super.onActivityResult(requestCode, resultCode, data);
         if(resultCode == RESULT_OK && requestCode == 1) {
             if(data != null) {
-                mDestination.setText(data.getStringExtra("address"));
+                setDestination.setText(data.getStringExtra("address"));
+                destination = data.getStringExtra("address");
             }
         }
     }
