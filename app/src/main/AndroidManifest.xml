@@ -31,7 +31,7 @@
             android:windowSoftInputMode="adjustResize">
         </activity>
         <activity
-            android:name=".MapActivity1" />
+            android:name=".MapActivity" />
     </application>
 
 </manifest>

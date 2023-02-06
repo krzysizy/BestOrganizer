@@ -1,8 +1,11 @@
 package com.example.organizertest;
 
+import static com.example.organizertest.AddNewTask.TAG;
+
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -46,9 +49,6 @@ public class MainActivity extends AppCompatActivity implements OnDialogCloseList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-//        if(isServicesOK()){
-//            init();
-//        }
 
         recyclerView = findViewById(R.id.recycerlview);
         mFab = findViewById(R.id.floatingActionButton);
@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity implements OnDialogCloseList
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AddNewTask.newInstance().show(getSupportFragmentManager() , AddNewTask.TAG);
+                AddNewTask.newInstance().show(getSupportFragmentManager() , TAG);
             }
         });
 
@@ -80,16 +80,20 @@ public class MainActivity extends AppCompatActivity implements OnDialogCloseList
        listenerRegistration = query.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                for (DocumentChange documentChange : value.getDocumentChanges()){
-                    if (documentChange.getType() == DocumentChange.Type.ADDED){
-                        String id = documentChange.getDocument().getId();
-                        ToDoModel toDoModel = documentChange.getDocument().toObject(ToDoModel.class).withId(id);
-                        mList.add(toDoModel);
-                        adapter.notifyDataSetChanged();
-                    }
+                if (error!=null){
+                    Toast.makeText(MainActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();
                 }
-                listenerRegistration.remove();
-
+                else {
+                    for (DocumentChange documentChange : value.getDocumentChanges()){
+                        if (documentChange.getType() == DocumentChange.Type.ADDED){
+                            String id = documentChange.getDocument().getId();
+                            ToDoModel toDoModel = documentChange.getDocument().toObject(ToDoModel.class).withId(id);
+                            mList.add(toDoModel);
+                            adapter.notifyDataSetChanged();
+                        }
+                    }
+                    listenerRegistration.remove();
+                }
             }
         });
     }
@@ -100,8 +104,5 @@ public class MainActivity extends AppCompatActivity implements OnDialogCloseList
         showData();
         adapter.notifyDataSetChanged();
     }
-
-
-
 
 }

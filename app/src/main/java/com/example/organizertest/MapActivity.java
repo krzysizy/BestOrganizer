@@ -38,7 +38,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MapActivity1 extends AppCompatActivity implements OnMapReadyCallback {
+public class MapActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -115,8 +115,9 @@ public class MapActivity1 extends AppCompatActivity implements OnMapReadyCallbac
 
         mSearchText.setAdapter(mPlaceAutocompleteAdapter);
 
-        mSearchText.setText(searchAddress);
-
+        if (!searchAddress.equals("Set destination")){
+            mSearchText.setText(searchAddress);
+        }
 
 
 //        AutocompleteSupportFragment autocompleteFragment = (AutocompleteSupportFragment)
@@ -184,7 +185,7 @@ public class MapActivity1 extends AppCompatActivity implements OnMapReadyCallbac
 
         String searchString = mSearchText.getText().toString();
 
-        Geocoder geocoder = new Geocoder(MapActivity1.this);
+        Geocoder geocoder = new Geocoder(MapActivity.this);
         List<Address> list = new ArrayList<>();
         try{
             list = geocoder.getFromLocationName(searchString, 1);
@@ -227,7 +228,7 @@ public class MapActivity1 extends AppCompatActivity implements OnMapReadyCallbac
                                     "My Location");
 
                         }else{
-                            Toast.makeText(MapActivity1.this, "unable to get current location", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MapActivity.this, "unable to get current location", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
@@ -253,7 +254,7 @@ public class MapActivity1 extends AppCompatActivity implements OnMapReadyCallbac
     private void initMap(){
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
 
-        mapFragment.getMapAsync(MapActivity1.this);
+        mapFragment.getMapAsync(MapActivity.this);
     }
 
     private void getLocationPermission(){
