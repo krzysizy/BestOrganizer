@@ -206,6 +206,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         } else {
             mSave.setEnabled(false);
             mSave.setColorFilter(Color.GRAY);
+            Toast.makeText(MapActivity.this, "Location not found", Toast.LENGTH_SHORT).show();
         }
     }
 
