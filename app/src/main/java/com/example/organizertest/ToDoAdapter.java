@@ -16,6 +16,7 @@ import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.List;
@@ -82,7 +83,7 @@ public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.MyViewHolder> 
             }
         });
 
-        holder.mCheckBox.setOnClickListener(new View.OnClickListener() {
+        holder.eachTask.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String text = holder.mCheckBox.getText().toString();
@@ -228,6 +229,7 @@ public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.MyViewHolder> 
         TextView destinationTv;
         CheckBox mCheckBox;
         ImageView mNavigation;
+        ConstraintLayout eachTask;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -237,6 +239,7 @@ public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.MyViewHolder> 
             mNavigation = itemView.findViewById(R.id.navigation);
             timeTv = itemView.findViewById(R.id.time_tv);
             destinationTv = itemView.findViewById(R.id.destination_tv);
+            eachTask = itemView.findViewById(R.id.each_task);
         }
     }
 
