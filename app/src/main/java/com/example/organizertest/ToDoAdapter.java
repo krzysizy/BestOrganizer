@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Bundle;
+import android.speech.tts.TextToSpeech;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,12 +19,14 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.List;
+import java.util.Locale;
 
 public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.MyViewHolder> {
 
     private List<ToDoModel> todoList;
     private MainActivity activity;
     private FirebaseFirestore firestore;
+    private TextToSpeech tts;
 
     public ToDoAdapter(MainActivity mainActivity, List<ToDoModel> todoList) {
         this.todoList = todoList;
@@ -68,9 +71,24 @@ public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.MyViewHolder> 
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-
         ToDoModel toDoModel = todoList.get(position);
         holder.mCheckBox.setText(toDoModel.getTask());
+
+        tts = new TextToSpeech(getContext(), new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+                if (status != TextToSpeech.ERROR)
+                    tts.setLanguage(Locale.ENGLISH);
+            }
+        });
+
+        holder.mCheckBox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String text = holder.mCheckBox.getText().toString();
+                tts.speak(text, TextToSpeech.QUEUE_FLUSH, null);
+            }
+        });
 
         if(!toDoModel.getDue().isEmpty())
             holder.mDueDateTv.setText(toDoModel.getDue());

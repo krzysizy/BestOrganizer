@@ -2,10 +2,8 @@ package com.example.organizertest;
 
 import static com.example.organizertest.AddNewTask.TAG;
 
-import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -15,9 +13,7 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GoogleApiAvailability;
-import com.google.android.material.bottomsheet.BottomSheetBehavior;
+
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.EventListener;
@@ -75,7 +71,8 @@ public class MainActivity extends AppCompatActivity implements OnDialogCloseList
         recyclerView.setAdapter(adapter);
     }
     private void showData(){
-       query = firestore.collection("task").orderBy("status", Query.Direction.ASCENDING).orderBy("time" , Query.Direction.DESCENDING);
+       query = firestore.collection("task").orderBy("status", Query.Direction.ASCENDING)
+               .orderBy("due" , Query.Direction.ASCENDING).orderBy("sTime", Query.Direction.ASCENDING);
 
        listenerRegistration = query.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
