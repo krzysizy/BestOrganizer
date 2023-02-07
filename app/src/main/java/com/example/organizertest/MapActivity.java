@@ -48,7 +48,12 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        Toast.makeText(this, "Map is Ready", Toast.LENGTH_SHORT).show();
+        if (Variables.isInclusive()) {
+            String text = "Map is Ready";
+            tts.speak(text, TextToSpeech.QUEUE_FLUSH, null);
+        } else {
+            Toast.makeText(this, "Map is Ready", Toast.LENGTH_SHORT).show();
+        }
         mMap = googleMap;
 
         if(Variables.isInclusive()) {
@@ -116,8 +121,13 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mGps = (ImageView) findViewById(R.id.ic_gps);
         search = (ImageView) findViewById(R.id.ic_search);
         mSave = (ImageView) findViewById(R.id.save_back);
-        mSave.setEnabled(false);
-        mSave.setColorFilter(Color.GRAY);
+        if(Variables.isInclusive()) {
+            mSave.setEnabled(true);
+            mSave.setColorFilter(Color.BLACK);
+        } else {
+            mSave.setEnabled(false);
+            mSave.setColorFilter(Color.GRAY);
+        }
         mBack = (ImageView) findViewById(R.id.back);
 
         tts = new TextToSpeech(MapActivity.this, new TextToSpeech.OnInitListener() {
@@ -169,10 +179,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         search.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (Variables.isInclusive()) {
-                    String text = "Find location";
-                    tts.speak(text, TextToSpeech.QUEUE_FLUSH, null);
-                }
                 geoLocate();
             }
         });
@@ -180,6 +186,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mGps.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (Variables.isInclusive()) {
+                    String text = "Find current location";
+                    tts.speak(text, TextToSpeech.QUEUE_FLUSH, null);
+                }
                 getDeviceLocation();
             }
         });
@@ -187,16 +197,34 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent();
-                intent.putExtra("address", saveAddress.getAddressLine(0));
-                setResult(RESULT_OK, intent);
-                finish();
+                String text;
+                if (Variables.isInclusive() && (saveAddress != null)) {
+                    text = "Save location";
+                    tts.speak(text, TextToSpeech.QUEUE_FLUSH, null);
+                    Intent intent = new Intent();
+                    intent.putExtra("address", saveAddress.getAddressLine(0));
+                    setResult(RESULT_OK, intent);
+                    finish();
+                } else if (mSave.isEnabled() && !Variables.isInclusive()) {
+                    Intent intent = new Intent();
+                    intent.putExtra("address", saveAddress.getAddressLine(0));
+                    setResult(RESULT_OK, intent);
+                    finish();
+                } else {
+                    text = "Pleas find location";
+                    tts.speak(text, TextToSpeech.QUEUE_FLUSH, null);
+                }
+
             }
         });
 
         mBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (Variables.isInclusive()) {
+                    String text = "Back";
+                    tts.speak(text, TextToSpeech.QUEUE_FLUSH, null);
+                }
                 Intent intent = new Intent();
                 intent.putExtra("address", searchAddress);
                 setResult(RESULT_OK, intent);
@@ -229,15 +257,20 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             moveCamera(new LatLng(address.getLatitude(), address.getLongitude()), DEFAULT_ZOOM,
                     address.getAddressLine(0));
 
-            mSave.setEnabled(true);
-            mSave.setColorFilter(Color.BLACK);
+            if (Variables.isInclusive()) {
+                String text = address.getAddressLine(0);
+                tts.speak(text, TextToSpeech.QUEUE_FLUSH, null);
+            } else {
+                mSave.setEnabled(true);
+                mSave.setColorFilter(Color.BLACK);
+            }
         } else {
-            mSave.setEnabled(false);
-            mSave.setColorFilter(Color.GRAY);
             if (Variables.isInclusive()) {
                 String text = "Location not found";
                 tts.speak(text, TextToSpeech.QUEUE_FLUSH, null);
             } else {
+                mSave.setEnabled(false);
+                mSave.setColorFilter(Color.GRAY);
                 Toast.makeText(MapActivity.this, "Location not found", Toast.LENGTH_SHORT).show();
             }
         }
@@ -262,7 +295,12 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                                     "My Location");
 
                         }else{
-                            Toast.makeText(MapActivity.this, "unable to get current location", Toast.LENGTH_SHORT).show();
+                            if (Variables.isInclusive()) {
+                                String text = "Unable to get current location";
+                                tts.speak(text, TextToSpeech.QUEUE_FLUSH, null);
+                            } else {
+                                Toast.makeText(MapActivity.this, "Unable to get current location", Toast.LENGTH_SHORT).show();
+                            }
                         }
                     }
                 });
