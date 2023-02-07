@@ -198,7 +198,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             @Override
             public void onClick(View v) {
                 String text;
-                if (Variables.isInclusive() && (saveAddress != null)) {
+                if (Variables.isInclusive() && !(saveAddress == null)) {
                     text = "Save location";
                     tts.speak(text, TextToSpeech.QUEUE_FLUSH, null);
                     Intent intent = new Intent();

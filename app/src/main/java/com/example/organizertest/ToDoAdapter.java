@@ -142,6 +142,10 @@ public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.MyViewHolder> 
         holder.mNavigation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(Variables.isInclusive()) {
+                    String text = "Display track  to " + toDoModel.getDestination();
+                    tts.speak(text, TextToSpeech.QUEUE_FLUSH, null);
+                }
                 String sSource = "";
                 String sDestination = toDoModel.getDestination();
                 DisplayTrack(sSource, sDestination);
