@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:context=".AddNewTask"
+    android:background="@color/black">
+
+    <TextView
+        android:id="@+id/set_start_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="10dp"
+        android:drawableRight="@drawable/ic_baseline_access_time_24"
+        android:drawablePadding="8dp"
+        android:text="Set start time"
+        android:textColor="@color/yellow"
+        android:textSize="30sp"
+        android:drawableTint="@color/yellow"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/set_date_tv" />
+
+    <TextView
+        android:id="@+id/set_end_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="60dp"
+        android:layout_marginTop="10dp"
+        android:visibility="invisible"
+        android:drawableRight="@drawable/ic_baseline_access_time_filled_24"
+        android:drawablePadding="8dp"
+        android:text="Set end time"
+        android:textColor="@color/purple"
+        android:textSize="30sp"
+        app:layout_constraintStart_toEndOf="@+id/set_start_time"
+        app:layout_constraintTop_toBottomOf="@+id/set_date_tv" />
+
+    <EditText
+        android:id="@+id/task_edittext"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:backgroundTint="@color/yellow"
+        android:hint="Write Your Task Here ...."
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:textColorHint="@color/yellow"
+        android:textColor="@color/yellow" />
+
+    <TextView
+        android:id="@+id/set_date_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="8dp"
+        android:drawableRight="@drawable/ic_baseline_calendar_today_24"
+        android:drawableTint="@color/yellow"
+        android:drawablePadding="8dp"
+        android:text="Set date"
+        android:textColor="@color/yellow"
+        android:textSize="30sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/task_edittext" />
+
+    <TextView
+        android:id="@+id/set_loc_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="10dp"
+        android:drawableRight="@drawable/ic_baseline_add_location_24"
+        android:drawableTint="@color/yellow"
+        android:drawablePadding="8dp"
+        android:text="Set destination"
+        android:textColor="@color/yellow"
+        android:textSize="30sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/set_start_time" />
+
+    <Button
+        android:id="@+id/save_btn"
+        android:layout_width="350dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="Save"
+        android:textColor="@color/black"
+        android:textSize="30dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.491"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/set_loc_tv" />
+
+    <ImageView
+        android:id="@+id/speek_mic_btn"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:src="@drawable/ic_baseline_mic_24"
+        app:tint="@color/yellow"
+        app:layout_constraintBottom_toBottomOf="@+id/task_edittext"
+        app:layout_constraintEnd_toEndOf="@+id/task_edittext"
+        app:layout_constraintTop_toTopOf="@+id/task_edittext"
+        android:adjustViewBounds="true"
+        android:scaleType="centerCrop"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

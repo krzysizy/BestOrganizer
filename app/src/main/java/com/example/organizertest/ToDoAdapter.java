@@ -135,13 +135,32 @@ public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.MyViewHolder> 
             }
         });
 
+        holder.mCheckBox.setText(toDoModel.getTask());
+
+        if(!toDoModel.getDue().isEmpty())
+            holder.mDueDateTv.setText(toDoModel.getDue());
+
+        holder.mCheckBox.setChecked(toBoolean(toDoModel.getStatus()));
+
+        if(!toDoModel.getDestination().isEmpty()) {
+            holder.mNavigation.setVisibility(View.VISIBLE);
+            holder.destinationTv.setText(toDoModel.getDestination());
+        }
+
+        if(!toDoModel.getsTime().isEmpty()){
+            if(!toDoModel.geteTime().isEmpty()){
+                holder.timeTv.setText(toDoModel.getsTime() + " - " + toDoModel.geteTime());
+            }
+            else {
+                holder.timeTv.setText(toDoModel.getsTime());
+            }
+        }
+
     }
 
     private void checkStatus(ToDoModel toDoModel, MyViewHolder holder) {
         if(toDoModel.getStatus() == 1) {
             holder.mCheckBox.setChecked(true);
-            holder.mCheckBox.setTextColor(Color.LTGRAY);
-            holder.mNavigation.setEnabled(false);
         }
     }
 

@@ -35,8 +35,7 @@ public class MainActivity extends AppCompatActivity implements OnDialogCloseList
     private List<ToDoModel> mList;
     private Query query;
     private ListenerRegistration listenerRegistration;
-    private static final int ERROR_DIALOG_REQUEST = 9001;
-    private boolean isOk;
+    private String android_id;
 
 
 
@@ -44,8 +43,8 @@ public class MainActivity extends AppCompatActivity implements OnDialogCloseList
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-
+        getSupportActionBar().hide();
+        android_id = getIntent().getStringExtra("android_id");
         recyclerView = findViewById(R.id.recycerlview);
         mFab = findViewById(R.id.floatingActionButton);
         firestore = FirebaseFirestore.getInstance();
@@ -70,8 +69,9 @@ public class MainActivity extends AppCompatActivity implements OnDialogCloseList
         showData();
         recyclerView.setAdapter(adapter);
     }
+
     private void showData(){
-       query = firestore.collection("task").orderBy("status", Query.Direction.ASCENDING)
+       query = firestore.collection("task").whereEqualTo("android_id", android_id).orderBy("status", Query.Direction.ASCENDING)
                .orderBy("due" , Query.Direction.ASCENDING).orderBy("sTime", Query.Direction.ASCENDING);
 
        listenerRegistration = query.addSnapshotListener(new EventListener<QuerySnapshot>() {
@@ -89,8 +89,8 @@ public class MainActivity extends AppCompatActivity implements OnDialogCloseList
                             adapter.notifyDataSetChanged();
                         }
                     }
-                    listenerRegistration.remove();
                 }
+                listenerRegistration.remove();
             }
         });
     }

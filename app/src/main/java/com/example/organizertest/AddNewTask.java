@@ -63,6 +63,7 @@ public class AddNewTask extends BottomSheetDialogFragment {
     private TextView setStartTime;
     private ImageView speechToText;
     private TextView setEndTime;
+    private String android_id;
     private static final int RECOGNIZER_CODE = 2;
 
     private static final int ERROR_DIALOG_REQUEST = 9001;
@@ -269,6 +270,7 @@ public class AddNewTask extends BottomSheetDialogFragment {
                         taskMap.put("destination",destination);
                         taskMap.put("status", 0);
                         taskMap.put("time", FieldValue.serverTimestamp());
+                        taskMap.put("android_id", android_id);
 
                         firestore.collection("task").add(taskMap).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
                             @Override
@@ -308,6 +310,7 @@ public class AddNewTask extends BottomSheetDialogFragment {
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         this.context = context;
+        this.android_id = getActivity().getIntent().getStringExtra("android_id");
     }
 
     @Override

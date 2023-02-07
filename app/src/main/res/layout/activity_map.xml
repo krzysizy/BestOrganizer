@@ -33,17 +33,6 @@
             android:scaleType="center"
             android:src="@drawable/search" />
 
-<!--        <EditText-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="match_parent"-->
-<!--            android:layout_toRightOf="@+id/ic_magnify"-->
-<!--            android:layout_centerVertical="true"-->
-<!--            android:textSize="15sp"-->
-<!--            android:textColor="#000"-->
-<!--            android:id="@+id/input_search"-->
-<!--            android:background="@null"-->
-<!--            android:hint="Enter Address, City or Zip Code"-->
-<!--            android:imeOptions="actionSearch"/>-->
 
         <AutoCompleteTextView
             android:id="@+id/input_search"
@@ -56,15 +45,6 @@
             android:textColor="#000"
             android:textSize="15sp"
             android:layout_toStartOf="@+id/ic_search"/>
-
-<!--        <fragment android:id="@+id/autocomplete_fragment"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="match_parent"-->
-<!--            android:layout_centerVertical="true"-->
-<!--            android:textSize="15sp"-->
-<!--            android:textColor="#000"-->
-<!--            android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"-->
-<!--            />-->
 
 
 
