@@ -16,7 +16,9 @@ import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
+import androidx.appcompat.view.menu.MenuView;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.Group;
 import androidx.recyclerview.widget.RecyclerView;
 import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.List;
@@ -37,7 +39,13 @@ public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.MyViewHolder> 
     @NonNull
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(activity).inflate(R.layout.each_task, parent, false);
+        View view;
+        if(Variables.isInclusive()) {
+            view = LayoutInflater.from(activity).inflate(R.layout.each_task_inclusive, parent, false);
+        } else {
+            view = LayoutInflater.from(activity).inflate(R.layout.each_task, parent, false);
+        }
+
         firestore = FirebaseFirestore.getInstance();
 
         return new MyViewHolder(view);
@@ -83,13 +91,17 @@ public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.MyViewHolder> 
             }
         });
 
-        holder.eachTask.setOnClickListener(new View.OnClickListener() {
+        holder.mCheckBox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String text = holder.mCheckBox.getText().toString();
-                tts.speak(text, TextToSpeech.QUEUE_FLUSH, null);
+                if(Variables.isInclusive()) {
+                    String text = holder.mCheckBox.getText().toString();
+                    tts.speak(text, TextToSpeech.QUEUE_FLUSH, null);
+                }
             }
         });
+
+
 
         if(!toDoModel.getDue().isEmpty())
             holder.mDueDateTv.setText(toDoModel.getDue());
@@ -201,11 +213,13 @@ public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.MyViewHolder> 
             holder.destinationTv.setPaintFlags(holder.mDueDateTv.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
             holder.timeTv.setPaintFlags(holder.mDueDateTv.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
             holder.mNavigation.setEnabled(false);
-            holder.mCheckBox.setTextColor(Color.LTGRAY);
-            holder.destinationTv.setTextColor(Color.LTGRAY);
-            holder.timeTv.setTextColor(Color.LTGRAY);
-            holder.mDueDateTv.setTextColor(Color.LTGRAY);
-            holder.mNavigation.setColorFilter(Color.LTGRAY);
+            if(!Variables.isInclusive()) {
+                holder.mCheckBox.setTextColor(Color.LTGRAY);
+                holder.destinationTv.setTextColor(Color.LTGRAY);
+                holder.timeTv.setTextColor(Color.LTGRAY);
+                holder.mDueDateTv.setTextColor(Color.LTGRAY);
+                holder.mNavigation.setColorFilter(Color.LTGRAY);
+            }
         }
         if(((!holder.mCheckBox.isChecked()) && holder.mCheckBox.getPaintFlags() != 0)){
             holder.mCheckBox.setPaintFlags(0);
@@ -213,11 +227,13 @@ public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.MyViewHolder> 
             holder.destinationTv.setPaintFlags(0);
             holder.timeTv.setPaintFlags(0);
             holder.mNavigation.setEnabled(true);
-            holder.mCheckBox.setTextColor(Color.BLACK);
-            holder.destinationTv.setTextColor(Color.BLACK);
-            holder.timeTv.setTextColor(Color.BLACK);
-            holder.mDueDateTv.setTextColor(Color.BLACK);
-            holder.mNavigation.setColorFilter(Color.BLACK);
+            if(!Variables.isInclusive()) {
+                holder.mCheckBox.setTextColor(Color.BLACK);
+                holder.destinationTv.setTextColor(Color.BLACK);
+                holder.timeTv.setTextColor(Color.BLACK);
+                holder.mDueDateTv.setTextColor(Color.BLACK);
+                holder.mNavigation.setColorFilter(Color.BLACK);
+            }
         }
     }
 
@@ -229,7 +245,6 @@ public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.MyViewHolder> 
         TextView destinationTv;
         CheckBox mCheckBox;
         ImageView mNavigation;
-        ConstraintLayout eachTask;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -239,7 +254,6 @@ public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.MyViewHolder> 
             mNavigation = itemView.findViewById(R.id.navigation);
             timeTv = itemView.findViewById(R.id.time_tv);
             destinationTv = itemView.findViewById(R.id.destination_tv);
-            eachTask = itemView.findViewById(R.id.each_task);
         }
     }
 

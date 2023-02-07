@@ -13,6 +13,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
+import android.speech.tts.TextToSpeech;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -43,6 +44,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public class AddNewTask extends BottomSheetDialogFragment {
@@ -64,6 +66,7 @@ public class AddNewTask extends BottomSheetDialogFragment {
     private ImageView speechToText;
     private TextView setEndTime;
     private String android_id;
+    private TextToSpeech tts;
     private static final int RECOGNIZER_CODE = 2;
 
     private static final int ERROR_DIALOG_REQUEST = 9001;
@@ -77,7 +80,13 @@ public class AddNewTask extends BottomSheetDialogFragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.add_new_task, container);
+
+        View rootView;
+        if(Variables.isInclusive()) {
+            rootView = inflater.inflate(R.layout.add_new_task_inclusive, container);
+        } else {
+            rootView = inflater.inflate(R.layout.add_new_task, container);
+        }
 
         //set to adjust screen height automatically, when soft keyboard appears on screen
         getDialog().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
@@ -99,6 +108,14 @@ public class AddNewTask extends BottomSheetDialogFragment {
         setEndTime = view.findViewById(R.id.set_end_time);
         speechToText = view.findViewById(R.id.speek_mic_btn);
         firestore = FirebaseFirestore.getInstance();
+
+        tts = new TextToSpeech(getContext(), new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+                if (status != TextToSpeech.ERROR)
+                    tts.setLanguage(Locale.ENGLISH);
+            }
+        });
 
         speechToText.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -135,14 +152,21 @@ public class AddNewTask extends BottomSheetDialogFragment {
             setDestination.setText(destinationUpdate);
         }
 
-        if (mTaskEdit.length() <= 0){
-            mSaveBtn.setEnabled(false);
-            mSaveBtn.setBackgroundColor(Color.GRAY);
-            mSaveBtn.setTextColor(Color.WHITE);
-        } else {
-            mSaveBtn.setEnabled(true);
-            mSaveBtn.setBackgroundColor(getResources().getColor(R.color.purple));
-            mSaveBtn.setTextColor(Color.WHITE);
+
+        if(!Variables.isInclusive()) {
+            if (mTaskEdit.length() <= 0) {
+                mSaveBtn.setEnabled(false);
+                mSaveBtn.setBackgroundColor(Color.GRAY);
+                mSaveBtn.setTextColor(Color.WHITE);
+            } else {
+                mSaveBtn.setEnabled(true);
+                mSaveBtn.setBackgroundColor(getResources().getColor(R.color.purple));
+                mSaveBtn.setTextColor(Color.WHITE);
+            }
+        } else
+        {
+            mSaveBtn.setBackgroundColor(Color.YELLOW);
+            mSaveBtn.setTextColor(Color.BLACK);
         }
 
         if(isServicesOK()){
@@ -158,13 +182,17 @@ public class AddNewTask extends BottomSheetDialogFragment {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                if (s.toString().equals("")){
-                   mSaveBtn.setEnabled(false);
-                   mSaveBtn.setBackgroundColor(Color.GRAY);
-                   mSaveBtn.setTextColor(Color.WHITE);
+                   if(!Variables.isInclusive()) {
+                       mSaveBtn.setEnabled(false);
+                       mSaveBtn.setBackgroundColor(Color.GRAY);
+                       mSaveBtn.setTextColor(Color.WHITE);
+                   }
                }else{
-                   mSaveBtn.setEnabled(true);
-                   mSaveBtn.setBackgroundColor(getResources().getColor(R.color.purple));
-                   mSaveBtn.setTextColor(Color.WHITE);
+                   if(!Variables.isInclusive()) {
+                       mSaveBtn.setEnabled(true);
+                       mSaveBtn.setBackgroundColor(getResources().getColor(R.color.purple));
+                       mSaveBtn.setTextColor(Color.WHITE);
+                   }
                }
             }
 
@@ -249,49 +277,53 @@ public class AddNewTask extends BottomSheetDialogFragment {
         mSaveBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (Variables.isInclusive() && mTaskEdit.getText().toString().equals("")) {
+                    String text = "Please complete all fields";
+                    tts.speak(text, TextToSpeech.QUEUE_FLUSH, null);
+                } else {
+                    String task = mTaskEdit.getText().toString();
 
-                String task = mTaskEdit.getText().toString();
-
-                if (finalIsUpdate){
-                    firestore.collection("task").document(id).update("task" , task , "due" , dueDate, "sTime", sTime, "eTime", eTime, "destination", destination);
-                    Toast.makeText(context, "Task Updated", Toast.LENGTH_SHORT).show();
-                }
-                else {
-                    if (task.isEmpty()) {
-                        Toast.makeText(context, "Empty task not Allowed !!", Toast.LENGTH_SHORT).show();
+                    if (finalIsUpdate) {
+                        firestore.collection("task").document(id).update("task", task, "due", dueDate, "sTime", sTime, "eTime", eTime, "destination", destination);
+                        Toast.makeText(context, "Task Updated", Toast.LENGTH_SHORT).show();
                     } else {
+                        if (task.isEmpty()) {
+                            Toast.makeText(context, "Empty task not Allowed !!", Toast.LENGTH_SHORT).show();
+                        } else {
 
-                        Map<String, Object> taskMap = new HashMap<>();
+                            Map<String, Object> taskMap = new HashMap<>();
 
-                        taskMap.put("task", task);
-                        taskMap.put("due", dueDate);
-                        taskMap.put("sTime", sTime);
-                        taskMap.put("eTime", eTime);
-                        taskMap.put("destination",destination);
-                        taskMap.put("status", 0);
-                        taskMap.put("time", FieldValue.serverTimestamp());
-                        taskMap.put("android_id", android_id);
+                            taskMap.put("task", task);
+                            taskMap.put("due", dueDate);
+                            taskMap.put("sTime", sTime);
+                            taskMap.put("eTime", eTime);
+                            taskMap.put("destination", destination);
+                            taskMap.put("status", 0);
+                            taskMap.put("time", FieldValue.serverTimestamp());
+                            taskMap.put("android_id", android_id);
 
-                        firestore.collection("task").add(taskMap).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
-                            @Override
-                            public void onComplete(@NonNull Task<DocumentReference> task) {
-                                if (task.isSuccessful()) {
-                                    Toast.makeText(context, "Task Saved", Toast.LENGTH_SHORT).show();
-                                } else {
-                                    Toast.makeText(context, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                            firestore.collection("task").add(taskMap).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+                                @Override
+                                public void onComplete(@NonNull Task<DocumentReference> task) {
+                                    if (task.isSuccessful()) {
+                                        Toast.makeText(context, "Task Saved", Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        Toast.makeText(context, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                    }
                                 }
-                            }
-                        }).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
-                            }
-                        });
+                            }).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        }
                     }
+                    dismiss();
                 }
-                dismiss();
             }
         });
+
     }
 
     private void init(){

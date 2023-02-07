@@ -3,7 +3,9 @@ package com.example.organizertest;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -26,7 +28,9 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -44,6 +48,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         Toast.makeText(this, "Map is Ready", Toast.LENGTH_SHORT).show();
         mMap = googleMap;
+
+        if(Variables.isInclusive()) {
+            mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.mapstyle_night));
+        }
 
         if (mLocationPermissionsGranted) {
             getDeviceLocation();
@@ -85,7 +93,12 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_map);
+        if(Variables.isInclusive()) {
+            setContentView(R.layout.activity_map_inclusive);
+        } else {
+            setContentView(R.layout.activity_map);
+        }
+
 
 
         getSupportActionBar().hide();
@@ -246,6 +259,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             MarkerOptions options = new MarkerOptions()
                     .position(latLng)
                     .title(title);
+            if(Variables.isInclusive()) {
+                options.icon(BitmapDescriptorFactory
+                        .defaultMarker(BitmapDescriptorFactory.HUE_YELLOW));
+            }
             mMap.addMarker(options);
         }
 

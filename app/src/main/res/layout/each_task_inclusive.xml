@@ -18,11 +18,9 @@
         >
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/each_task"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/black"
-           >
+            android:background="@color/black">
 
             <com.google.android.material.checkbox.MaterialCheckBox
                 android:id="@+id/mcheckbox"
@@ -31,9 +29,9 @@
                 android:buttonTint="@color/yellow"
                 android:paddingStart="10dp"
                 android:text="This is task 1"
+                android:textColor="@color/yellow"
                 android:textSize="30sp"
                 android:textStyle="bold"
-                android:textColor="@color/yellow"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
@@ -44,8 +42,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="40dp"
-                android:textSize="20sp"
                 android:textColor="@color/yellow"
+                android:textSize="20sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/mcheckbox" />
 
@@ -55,8 +53,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="40dp"
                 android:layout_marginTop="5dp"
-                android:textSize="20sp"
                 android:textColor="@color/yellow"
+                android:textSize="20sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/due_date_tv" />
 
@@ -75,15 +73,21 @@
                 android:id="@+id/navigation"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
+                android:layout_marginEnd="10dp"
+                android:adjustViewBounds="true"
+                android:scaleType="centerCrop"
                 android:src="@drawable/navigation"
                 android:visibility="invisible"
-                app:tint="@color/yellow"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                android:layout_marginEnd="10dp"
-                android:scaleType="centerCrop"
-                android:adjustViewBounds="true"/>
+                app:tint="@color/yellow" />
+
+            <androidx.constraintlayout.widget.Group
+                android:id="@+id/group"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:constraint_referenced_ids="mcheckbox,due_date_tv,time_tv,destination_tv" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>

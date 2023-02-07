@@ -3,8 +3,10 @@ package com.example.organizertest;
 import static com.example.organizertest.AddNewTask.TAG;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -29,35 +31,53 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity implements OnDialogCloseListner{
 
     private RecyclerView recyclerView;
-    private FloatingActionButton mFab;
+    private ImageView mFab;
     private FirebaseFirestore firestore;
     private ToDoAdapter adapter;
     private List<ToDoModel> mList;
     private Query query;
     private ListenerRegistration listenerRegistration;
     private String android_id;
+    private ImageView inclusive;
 
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        if(Variables.isInclusive()) {
+            setContentView(R.layout.activity_main_inclusive);
+        } else {
+            setContentView(R.layout.activity_main);
+        }
+
         getSupportActionBar().hide();
         android_id = getIntent().getStringExtra("android_id");
         recyclerView = findViewById(R.id.recycerlview);
         mFab = findViewById(R.id.floatingActionButton);
         firestore = FirebaseFirestore.getInstance();
+        inclusive = (ImageView) findViewById(R.id.inclusive_btn);
 
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
-
-
 
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 AddNewTask.newInstance().show(getSupportFragmentManager() , TAG);
+            }
+        });
+
+        inclusive.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(Variables.isInclusive())
+                    Variables.setInclusive(false);
+                else
+                    Variables.setInclusive(true);
+                Intent intent = getIntent();
+                finish();
+                startActivity(intent);
             }
         });
 
