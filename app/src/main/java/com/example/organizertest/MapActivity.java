@@ -1,6 +1,7 @@
 package com.example.organizertest;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -10,7 +11,9 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
+import android.speech.RecognizerIntent;
 import android.speech.tts.TextToSpeech;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AutoCompleteTextView;
@@ -96,8 +99,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     AutocompleteSessionToken autocompleteSessionToken;
     PlacesClient placesClient;
     private TextToSpeech tts;
+    private static final int RECOGNIZER_CODE = 2;
 
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -129,6 +134,22 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             mSave.setColorFilter(Color.GRAY);
         }
         mBack = (ImageView) findViewById(R.id.back);
+
+        mSearchText.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if(Variables.isInclusive()) {
+                    tts.speak("Please tell me your destination", TextToSpeech.QUEUE_FLUSH, null);
+                    Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+                    intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+                    intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Speek Up");
+                    startActivityForResult(intent, RECOGNIZER_CODE);
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        });
 
         tts = new TextToSpeech(MapActivity.this, new TextToSpeech.OnInitListener() {
             @Override
@@ -236,6 +257,14 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == RECOGNIZER_CODE && resultCode == RESULT_OK){
+            ArrayList<String> taskText = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+            mSearchText.setText(taskText.get(0).toString());
+        }
+    }
 
     private void geoLocate(){
 
