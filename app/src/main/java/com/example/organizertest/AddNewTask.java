@@ -127,6 +127,8 @@ public class AddNewTask extends BottomSheetDialogFragment {
             }
         });
 
+
+
         boolean isUpdate = false;
 
         final Bundle bundle = getArguments();
@@ -173,6 +175,19 @@ public class AddNewTask extends BottomSheetDialogFragment {
             init();
         }
 
+        mTaskEdit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(Variables.isInclusive()) {
+                    tts.speak("Please tell me your task", TextToSpeech.QUEUE_FLUSH, null);
+                    Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+                    intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+                    intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Speek Up");
+                    startActivityForResult(intent, RECOGNIZER_CODE);
+                }
+            }
+        });
+
         mTaskEdit.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -193,6 +208,7 @@ public class AddNewTask extends BottomSheetDialogFragment {
                        mSaveBtn.setBackgroundColor(getResources().getColor(R.color.purple));
                        mSaveBtn.setTextColor(Color.WHITE);
                    }
+
                }
             }
 
