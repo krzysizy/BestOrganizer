@@ -18,6 +18,7 @@
         >
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/each_task"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/black"
@@ -72,15 +73,17 @@
 
             <ImageView
                 android:id="@+id/navigation"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
                 android:src="@drawable/navigation"
                 android:visibility="invisible"
                 app:tint="@color/yellow"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                android:layout_marginEnd="10dp"/>
+                android:layout_marginEnd="10dp"
+                android:scaleType="centerCrop"
+                android:adjustViewBounds="true"/>
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
