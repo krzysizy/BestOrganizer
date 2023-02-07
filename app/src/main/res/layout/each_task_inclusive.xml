@@ -14,22 +14,25 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        >
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/black"
            >
 
             <com.google.android.material.checkbox.MaterialCheckBox
                 android:id="@+id/mcheckbox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:buttonTint="@color/purple"
+                android:buttonTint="@color/yellow"
                 android:paddingStart="10dp"
                 android:text="This is task 1"
-                android:textSize="15sp"
+                android:textSize="30sp"
                 android:textStyle="bold"
+                android:textColor="@color/yellow"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
@@ -40,7 +43,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="40dp"
-                android:textSize="14sp"
+                android:textSize="20sp"
+                android:textColor="@color/yellow"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/mcheckbox" />
 
@@ -48,10 +52,12 @@
                 android:id="@+id/time_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:textSize="14sp"
-                app:layout_constraintStart_toEndOf="@+id/due_date_tv"
-                app:layout_constraintTop_toBottomOf="@+id/mcheckbox" />
+                android:layout_marginStart="40dp"
+                android:layout_marginTop="5dp"
+                android:textSize="20sp"
+                android:textColor="@color/yellow"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/due_date_tv" />
 
             <TextView
                 android:id="@+id/destination_tv"
@@ -59,9 +65,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="40dp"
                 android:layout_marginTop="5dp"
-                android:textSize="14sp"
+                android:textColor="@color/yellow"
+                android:textSize="20sp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/due_date_tv" />
+                app:layout_constraintTop_toBottomOf="@+id/time_tv" />
 
             <ImageView
                 android:id="@+id/navigation"
@@ -69,6 +76,7 @@
                 android:layout_height="wrap_content"
                 android:src="@drawable/navigation"
                 android:visibility="invisible"
+                app:tint="@color/yellow"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
