@@ -5,6 +5,7 @@ import static com.example.organizertest.AddNewTask.TAG;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.speech.tts.TextToSpeech;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -27,6 +28,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity implements OnDialogCloseListner{
 
@@ -39,6 +41,7 @@ public class MainActivity extends AppCompatActivity implements OnDialogCloseList
     private ListenerRegistration listenerRegistration;
     private String android_id;
     private ImageView inclusive;
+    private TextToSpeech tts;
 
 
 
@@ -61,6 +64,14 @@ public class MainActivity extends AppCompatActivity implements OnDialogCloseList
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
 
+        tts = new TextToSpeech(MainActivity.this, new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+                if (status != TextToSpeech.ERROR)
+                    tts.setLanguage(Locale.ENGLISH);
+            }
+        });
+
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -71,10 +82,15 @@ public class MainActivity extends AppCompatActivity implements OnDialogCloseList
         inclusive.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(Variables.isInclusive())
+                String text;
+                if(Variables.isInclusive()) {
                     Variables.setInclusive(false);
-                else
+                    text = "Normal mode";
+                } else {
                     Variables.setInclusive(true);
+                    text = "Inclusive mode";
+                }
+                tts.speak(text, TextToSpeech.QUEUE_FLUSH, null);
                 Intent intent = getIntent();
                 finish();
                 startActivity(intent);
