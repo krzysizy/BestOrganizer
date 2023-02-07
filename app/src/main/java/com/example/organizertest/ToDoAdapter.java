@@ -3,6 +3,7 @@ package com.example.organizertest;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Bundle;
@@ -71,9 +72,24 @@ public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.MyViewHolder> 
         ToDoModel toDoModel = todoList.get(position);
         holder.mCheckBox.setText(toDoModel.getTask());
 
-        holder.mDueDateTv.setText("Due On " + toDoModel.getDue());
+        if(!toDoModel.getDue().isEmpty())
+            holder.mDueDateTv.setText(toDoModel.getDue());
 
         holder.mCheckBox.setChecked(toBoolean(toDoModel.getStatus()));
+
+        if(!toDoModel.getDestination().isEmpty()) {
+            holder.mNavigation.setVisibility(View.VISIBLE);
+            holder.destinationTv.setText(toDoModel.getDestination());
+        }
+
+        if(!toDoModel.getsTime().isEmpty()){
+            if(!toDoModel.geteTime().isEmpty()){
+                holder.timeTv.setText(toDoModel.getsTime() + " - " + toDoModel.geteTime());
+            }
+            else {
+                holder.timeTv.setText(toDoModel.getsTime());
+            }
+        }
 
         checkPaintStatus(holder);
 
@@ -106,6 +122,8 @@ public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.MyViewHolder> 
     private void checkStatus(ToDoModel toDoModel, MyViewHolder holder) {
         if(toDoModel.getStatus() == 1) {
             holder.mCheckBox.setChecked(true);
+            holder.mCheckBox.setTextColor(Color.LTGRAY);
+            holder.mNavigation.setEnabled(false);
         }
     }
 
@@ -142,10 +160,26 @@ public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.MyViewHolder> 
         if(holder.mCheckBox.isChecked()){
             holder.mCheckBox.setPaintFlags(holder.mCheckBox.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
             holder.mDueDateTv.setPaintFlags(holder.mDueDateTv.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+            holder.destinationTv.setPaintFlags(holder.mDueDateTv.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+            holder.timeTv.setPaintFlags(holder.mDueDateTv.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+            holder.mNavigation.setEnabled(false);
+            holder.mCheckBox.setTextColor(Color.LTGRAY);
+            holder.destinationTv.setTextColor(Color.LTGRAY);
+            holder.timeTv.setTextColor(Color.LTGRAY);
+            holder.mDueDateTv.setTextColor(Color.LTGRAY);
+            holder.mNavigation.setColorFilter(Color.LTGRAY);
         }
         if(((!holder.mCheckBox.isChecked()) && holder.mCheckBox.getPaintFlags() != 0)){
             holder.mCheckBox.setPaintFlags(0);
             holder.mDueDateTv.setPaintFlags(0);
+            holder.destinationTv.setPaintFlags(0);
+            holder.timeTv.setPaintFlags(0);
+            holder.mNavigation.setEnabled(true);
+            holder.mCheckBox.setTextColor(Color.BLACK);
+            holder.destinationTv.setTextColor(Color.BLACK);
+            holder.timeTv.setTextColor(Color.BLACK);
+            holder.mDueDateTv.setTextColor(Color.BLACK);
+            holder.mNavigation.setColorFilter(Color.BLACK);
         }
     }
 
@@ -153,6 +187,8 @@ public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.MyViewHolder> 
     public class MyViewHolder extends RecyclerView.ViewHolder{
 
         TextView mDueDateTv;
+        TextView timeTv;
+        TextView destinationTv;
         CheckBox mCheckBox;
         ImageView mNavigation;
 
@@ -162,7 +198,8 @@ public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.MyViewHolder> 
             mDueDateTv = itemView.findViewById(R.id.due_date_tv);
             mCheckBox = itemView.findViewById(R.id.mcheckbox);
             mNavigation = itemView.findViewById(R.id.navigation);
-
+            timeTv = itemView.findViewById(R.id.time_tv);
+            destinationTv = itemView.findViewById(R.id.destination_tv);
         }
     }
 
