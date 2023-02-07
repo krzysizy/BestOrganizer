@@ -97,7 +97,7 @@ public class AddNewTask extends BottomSheetDialogFragment {
         return rootView;
     }
 
-    @SuppressLint("SuspiciousIndentation")
+    @SuppressLint({"SuspiciousIndentation", "ClickableViewAccessibility"})
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
