@@ -206,6 +206,10 @@ public class AddNewTask extends BottomSheetDialogFragment {
         setDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (Variables.isInclusive()) {
+                    String text = "Set date";
+                    tts.speak(text, TextToSpeech.QUEUE_FLUSH, null);
+                }
                 Calendar calendar = Calendar.getInstance();
 
                 int MONTH = calendar.get(Calendar.MONTH);
@@ -230,6 +234,10 @@ public class AddNewTask extends BottomSheetDialogFragment {
         setStartTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (Variables.isInclusive()) {
+                    String text = "Set start time";
+                    tts.speak(text, TextToSpeech.QUEUE_FLUSH, null);
+                }
                 final Calendar c = Calendar.getInstance();
                 int hour = c.get(Calendar.HOUR_OF_DAY);
                 int minute = c.get(Calendar.MINUTE);
@@ -252,6 +260,10 @@ public class AddNewTask extends BottomSheetDialogFragment {
         setEndTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (Variables.isInclusive()) {
+                    String text = "Set end time";
+                    tts.speak(text, TextToSpeech.QUEUE_FLUSH, null);
+                }
                 final Calendar c = Calendar.getInstance();
                 int hour = c.get(Calendar.HOUR_OF_DAY);
                 int minute = c.get(Calendar.MINUTE) + 1;
@@ -330,6 +342,10 @@ public class AddNewTask extends BottomSheetDialogFragment {
         setDestination.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (Variables.isInclusive()) {
+                    String text = "Set destination";
+                    tts.speak(text, TextToSpeech.QUEUE_FLUSH, null);
+                }
                 searchAddress = setDestination.getText();
                 Intent intent = new Intent(context, MapActivity.class);
                 intent.putExtra("address", searchAddress);

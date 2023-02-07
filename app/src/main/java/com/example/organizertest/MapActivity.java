@@ -10,6 +10,7 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
+import android.speech.tts.TextToSpeech;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AutoCompleteTextView;
@@ -41,6 +42,7 @@ import com.google.android.libraries.places.api.net.PlacesClient;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class MapActivity extends AppCompatActivity implements OnMapReadyCallback {
 
@@ -88,6 +90,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private GoogleMap mMap;
     AutocompleteSessionToken autocompleteSessionToken;
     PlacesClient placesClient;
+    private TextToSpeech tts;
 
 
     @Override
@@ -116,6 +119,14 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mSave.setEnabled(false);
         mSave.setColorFilter(Color.GRAY);
         mBack = (ImageView) findViewById(R.id.back);
+
+        tts = new TextToSpeech(MapActivity.this, new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+                if (status != TextToSpeech.ERROR)
+                    tts.setLanguage(Locale.ENGLISH);
+            }
+        });
 
         getLocationPermission();
 
@@ -158,6 +169,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         search.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (Variables.isInclusive()) {
+                    String text = "Find location";
+                    tts.speak(text, TextToSpeech.QUEUE_FLUSH, null);
+                }
                 geoLocate();
             }
         });
@@ -219,7 +234,12 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         } else {
             mSave.setEnabled(false);
             mSave.setColorFilter(Color.GRAY);
-            Toast.makeText(MapActivity.this, "Location not found", Toast.LENGTH_SHORT).show();
+            if (Variables.isInclusive()) {
+                String text = "Location not found";
+                tts.speak(text, TextToSpeech.QUEUE_FLUSH, null);
+            } else {
+                Toast.makeText(MapActivity.this, "Location not found", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
