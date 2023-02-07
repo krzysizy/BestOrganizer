@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -42,6 +43,7 @@ public class MainActivity extends AppCompatActivity implements OnDialogCloseList
     private String android_id;
     private ImageView inclusive;
     private TextToSpeech tts;
+    private TextView bestOrganizer;
 
 
 
@@ -60,6 +62,7 @@ public class MainActivity extends AppCompatActivity implements OnDialogCloseList
         mFab = findViewById(R.id.floatingActionButton);
         firestore = FirebaseFirestore.getInstance();
         inclusive = (ImageView) findViewById(R.id.inclusive_btn);
+        bestOrganizer = (TextView) findViewById(R.id.bestOrganizer);
 
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
@@ -75,7 +78,21 @@ public class MainActivity extends AppCompatActivity implements OnDialogCloseList
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(Variables.isInclusive()) {
+                    String text = "Add new task";
+                    tts.speak(text, TextToSpeech.QUEUE_FLUSH, null);
+                }
                 AddNewTask.newInstance().show(getSupportFragmentManager() , TAG);
+            }
+        });
+
+        bestOrganizer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(Variables.isInclusive()) {
+                    String text = "Best organizer inclusive mode";
+                    tts.speak(text, TextToSpeech.QUEUE_FLUSH, null);
+                }
             }
         });
 
