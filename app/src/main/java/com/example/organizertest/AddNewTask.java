@@ -246,8 +246,17 @@ public class AddNewTask extends BottomSheetDialogFragment {
                     @Override
                     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                         month = month + 1;
-                        setDate.setText(dayOfMonth + "/" + month + "/" + year);
-                        dueDate = dayOfMonth + "/" + month +"/"+year;
+                        String date;
+                        if (month < 10 && month > 0) {
+                            date = dayOfMonth + "/" + "0" + month + "/" + year;
+                        } else {
+                            date = dayOfMonth + "/" + month + "/" + year;
+                        }
+                        if (dayOfMonth < 10 && dayOfMonth > 0) {
+                            date = "0" + date;
+                        }
+                        setDate.setText(date);
+                        dueDate = date;
 
                     }
                 } , YEAR , MONTH , DAY);
@@ -273,9 +282,18 @@ public class AddNewTask extends BottomSheetDialogFragment {
                             @Override
                             public void onTimeSet(TimePicker view, int hourOfDay,
                                                   int minute) {
-                                setStartTime.setText(hourOfDay + ":" + minute);
+                                String time;
+                                if (minute < 10 && minute >= 0) {
+                                    time = hourOfDay + ":" + "0" + minute;
+                                } else {
+                                    time = hourOfDay + ":" + minute;
+                                }
+                                if (hourOfDay < 10 && hourOfDay >= 0) {
+                                    time = "0" + time;
+                                }
+                                setStartTime.setText(time);
                                 setEndTime.setVisibility(View.VISIBLE);
-                                sTime = hourOfDay + ":" + minute;
+                                sTime = time;
                             }
                         }, hour, minute, false);
                 timePickerDialog.show();
@@ -299,8 +317,17 @@ public class AddNewTask extends BottomSheetDialogFragment {
                             @Override
                             public void onTimeSet(TimePicker view, int hourOfDay,
                                                   int minute) {
-                                setEndTime.setText(hourOfDay + ":" + minute);
-                                eTime = hourOfDay + ":" + minute;
+                                String time;
+                                if (minute < 10 && minute >= 0) {
+                                    time = hourOfDay + ":" + "0" + minute;
+                                } else {
+                                    time = hourOfDay + ":" + minute;
+                                }
+                                if (hourOfDay < 10 && hourOfDay >= 0) {
+                                    time = "0" + time;
+                                }
+                                setEndTime.setText(time);
+                                eTime = time;
                             }
                         }, hour, minute, false);
                 timePickerDialog.show();
