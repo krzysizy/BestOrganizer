@@ -1,5 +1,6 @@
 package com.example.organizertest;
 
+import static android.app.Activity.RESULT_FIRST_USER;
 import static android.app.Activity.RESULT_OK;
 
 import android.annotation.SuppressLint;
@@ -69,7 +70,6 @@ public class AddNewTask extends BottomSheetDialogFragment {
     private TextView setEndTime;
     private String android_id;
     private TextToSpeech tts;
-    private static final int RECOGNIZER_CODE = 2;
 
     private static final int ERROR_DIALOG_REQUEST = 9001;
 
@@ -128,7 +128,7 @@ public class AddNewTask extends BottomSheetDialogFragment {
                 Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
                 intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
                 intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Speek Up");
-                startActivityForResult(intent, RECOGNIZER_CODE);
+                startActivityForResult(intent, 2);
             }
         });
 
@@ -189,7 +189,7 @@ public class AddNewTask extends BottomSheetDialogFragment {
                     Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
                     intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
                     intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Speek Up");
-                    startActivityForResult(intent, RECOGNIZER_CODE);
+                    startActivityForResult(intent, 2);
                     return true;
                 } else {
                     return false;
@@ -205,7 +205,9 @@ public class AddNewTask extends BottomSheetDialogFragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-               if (s.toString().equals("")){
+               if (s.toString().equals("") || setDestination.getText().toString().equals("Set destination")
+                        || setDate.getText().toString().equals("Set date") || setStartTime.getText().toString().equals("Set start time")
+                        || setEndTime.getText().toString().equals("Set end time")){
                    if(!Variables.isInclusive()) {
                        mSaveBtn.setEnabled(false);
                        mSaveBtn.setBackgroundColor(Color.GRAY);
@@ -257,7 +259,7 @@ public class AddNewTask extends BottomSheetDialogFragment {
                         }
                         setDate.setText(date);
                         dueDate = date;
-
+                        setSaveButtonEnabled();
                     }
                 } , YEAR , MONTH , DAY);
 
@@ -294,6 +296,7 @@ public class AddNewTask extends BottomSheetDialogFragment {
                                 setStartTime.setText(time);
                                 setEndTime.setVisibility(View.VISIBLE);
                                 sTime = time;
+                                setSaveButtonEnabled();
                             }
                         }, hour, minute, false);
                 timePickerDialog.show();
@@ -317,6 +320,8 @@ public class AddNewTask extends BottomSheetDialogFragment {
                             @Override
                             public void onTimeSet(TimePicker view, int hourOfDay,
                                                   int minute) {
+
+
                                 String time;
                                 if (minute < 10 && minute >= 0) {
                                     time = hourOfDay + ":" + "0" + minute;
@@ -328,6 +333,7 @@ public class AddNewTask extends BottomSheetDialogFragment {
                                 }
                                 setEndTime.setText(time);
                                 eTime = time;
+                                setSaveButtonEnabled();
                             }
                         }, hour, minute, false);
                 timePickerDialog.show();
@@ -350,6 +356,11 @@ public class AddNewTask extends BottomSheetDialogFragment {
                     String task = mTaskEdit.getText().toString();
 
                     if (finalIsUpdate) {
+                        task = mTaskEdit.getText().toString();
+                        dueDate = setDate.getText().toString();
+                        sTime = setStartTime.getText().toString();
+                        eTime = setEndTime.getText().toString();
+                        destination = setDestination.getText().toString();
                         firestore.collection("task").document(id).update("task", task, "due", dueDate, "sTime", sTime, "eTime", eTime, "destination", destination);
                         if (Variables.isInclusive()) {
                             String text = "Task Updated";
@@ -400,6 +411,22 @@ public class AddNewTask extends BottomSheetDialogFragment {
             }
         });
 
+    }
+
+    private void setSaveButtonEnabled() {
+        if(!Variables.isInclusive()) {
+            if (mTaskEdit.getText().toString().equals("") || setDestination.getText().toString().equals("Set destination")
+                    || setDate.getText().toString().equals("Set date") || setStartTime.getText().toString().equals("Set start time")
+                    || setEndTime.getText().toString().equals("Set end time")){
+                mSaveBtn.setEnabled(false);
+                mSaveBtn.setBackgroundColor(Color.GRAY);
+                mSaveBtn.setTextColor(Color.WHITE);
+            } else {
+                mSaveBtn.setEnabled(true);
+                mSaveBtn.setBackgroundColor(getResources().getColor(R.color.purple));
+                mSaveBtn.setTextColor(Color.WHITE);
+            }
+        }
     }
 
     private void init(){
@@ -454,15 +481,19 @@ public class AddNewTask extends BottomSheetDialogFragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(resultCode == RESULT_OK && requestCode == 1) {
-            if(data != null) {
-                setDestination.setText(data.getStringExtra("address"));
-                destination = data.getStringExtra("address");
+        if (requestCode == 1 || requestCode == 2) {
+            if (resultCode == RESULT_FIRST_USER ) {
+                if (data != null) {
+                    destination = data.getStringExtra("address");
+                    setDestination.setText(destination);
+                    setSaveButtonEnabled();
+                }
             }
-        }
-        if(requestCode == RECOGNIZER_CODE && resultCode == RESULT_OK){
-            ArrayList<String> taskText = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-            mTaskEdit.setText(taskText.get(0).toString());
+            if (resultCode == RESULT_OK) {
+                assert data != null;
+                ArrayList<String> taskText = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+                mTaskEdit.setText(taskText.get(0));
+            }
         }
     }
 }

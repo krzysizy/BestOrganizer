@@ -86,6 +86,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private static final float DEFAULT_ZOOM = 15f;
     private Address saveAddress;
     private String searchAddress;
+    private boolean isEnabled = false;
 
 
     private AutoCompleteTextView mSearchText;
@@ -99,8 +100,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     AutocompleteSessionToken autocompleteSessionToken;
     PlacesClient placesClient;
     private TextToSpeech tts;
-    private static final int RECOGNIZER_CODE = 2;
-
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -111,8 +110,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         } else {
             setContentView(R.layout.activity_map);
         }
-
-
 
         getSupportActionBar().hide();
 
@@ -139,11 +136,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if(Variables.isInclusive()) {
-                    tts.speak("Please tell me your destination", TextToSpeech.QUEUE_FLUSH, null);
+                    tts.speak("Please tell me task destination", TextToSpeech.QUEUE_FLUSH, null);
                     Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
                     intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
                     intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Speek Up");
-                    startActivityForResult(intent, RECOGNIZER_CODE);
+                    startActivityForResult(intent, 1);
                     return true;
                 } else {
                     return false;
@@ -219,23 +216,19 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             @Override
             public void onClick(View v) {
                 String text;
-                if (Variables.isInclusive() && !(saveAddress == null)) {
-                    text = "Save location";
-                    tts.speak(text, TextToSpeech.QUEUE_FLUSH, null);
-                    Intent intent = new Intent();
-                    intent.putExtra("address", saveAddress.getAddressLine(0));
-                    setResult(RESULT_OK, intent);
+                if (isEnabled) {
+                    if (Variables.isInclusive()) {
+                        text = "Save location";
+                        tts.speak(text, TextToSpeech.QUEUE_FLUSH, null);
+                    }
+                    Intent intent1 = new Intent();
+                    intent1.putExtra("address", saveAddress.getAddressLine(0));
+                    setResult(RESULT_FIRST_USER, intent1);
                     finish();
-                } else if (mSave.isEnabled() && !Variables.isInclusive()) {
-                    Intent intent = new Intent();
-                    intent.putExtra("address", saveAddress.getAddressLine(0));
-                    setResult(RESULT_OK, intent);
-                    finish();
-                } else {
+                } else if (Variables.isInclusive()) {
                     text = "Pleas find location";
                     tts.speak(text, TextToSpeech.QUEUE_FLUSH, null);
                 }
-
             }
         });
 
@@ -246,9 +239,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     String text = "Back";
                     tts.speak(text, TextToSpeech.QUEUE_FLUSH, null);
                 }
-                Intent intent = new Intent();
-                intent.putExtra("address", searchAddress);
-                setResult(RESULT_OK, intent);
+                Intent intent1 = new Intent();
+                intent1.putExtra("address", searchAddress);
+                setResult(RESULT_FIRST_USER, intent1);
                 finish();
             }
         });
@@ -260,9 +253,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == RECOGNIZER_CODE && resultCode == RESULT_OK){
-            ArrayList<String> taskText = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-            mSearchText.setText(taskText.get(0).toString());
+        if(requestCode == 1 && resultCode == RESULT_OK){
+            assert data != null;
+            ArrayList<String> mapText = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+            mSearchText.setText(mapText.get(0));
         }
     }
 
@@ -286,6 +280,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             moveCamera(new LatLng(address.getLatitude(), address.getLongitude()), DEFAULT_ZOOM,
                     address.getAddressLine(0));
 
+            isEnabled = true;
             if (Variables.isInclusive()) {
                 String text = address.getAddressLine(0);
                 tts.speak(text, TextToSpeech.QUEUE_FLUSH, null);
@@ -294,6 +289,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 mSave.setColorFilter(Color.BLACK);
             }
         } else {
+            isEnabled = false;
             if (Variables.isInclusive()) {
                 String text = "Location not found";
                 tts.speak(text, TextToSpeech.QUEUE_FLUSH, null);
