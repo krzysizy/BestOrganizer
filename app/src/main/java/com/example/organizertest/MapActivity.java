@@ -115,7 +115,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         searchAddress = getIntent().getStringExtra("address");
 
-        Places.initialize(getApplicationContext(), "AIzaSyD4Oxr-o3z4qIj6FKNZ-SRIh2MaZMzc8JM");
+        Places.initialize(getApplicationContext(), "Goggle Api Key");
         autocompleteSessionToken = AutocompleteSessionToken.newInstance();
         placesClient =Places.createClient(this);
 
